@@ -1,0 +1,82 @@
+---
+title: Pourquoi et comment inscrire la production de cartes statistiques dans un processus
+  de recherche reproductible
+author: "Giraud & Lambert"
+date: "Journée cartostats - 9 juin 2017"
+output: 
+  ioslides_presentation:
+        widescreen: true
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Pourquoi
+
+
+- La reproductibilité d'un résultat scientifique est un élément clef de sa validation. 
+
+- Les cartes, comme les autres production graphiques ou statistiques sont des éléments à part entière des études scientifique. 
+
+- La grande majorité des cartes produites dans un contexte académique actuellement sont produite en utilisant une grande variété de logiciel et de formats. 
+
+- Cette variété de formats et de logiciel rend difficile la reproduction des cartes. 
+
+![Spectre de la reproductibilité cartographique](./img/Fig01.png)
+
+
+## Comment
+
+
+## Quels objectifs
+
+- Pouvoir mettre en oeuvre un grand nombre de traitements, de méthodes et de représentations stat/spatials dans un même environnement.
+
+- Pouvoir présenter ses résultats de manière à permettre leur reproduction 
+
+- Diffuser et partager ses résultats, éventuellement travailler en équipe ou faire appel à des contributeurs. 
+
+
+## Quels critères utiliser pour choisir des outils adaptés
+
+- Disponibilité (question du coût des licences)    
+
+- Transparence (open-source, licence d'utilisation)    
+
+- Simplicité d'utilisation (degrès d'adoption de la solution dans la communauté concernée)  
+
+
+
+## Un jeu d'outils et de technologie
+
+- Pouvoir mettre en oeuvre un grand nombre de traitements, de méthodes et de représentations stat/spatials dans un même environnement.  
+**==> Le logiciel R, son ecosystème de package et un IDE.**   
+
+- Pouvoir présenter ses résultats de manière à permettre leur reproduction   
+**==> Des solutions de *literate programming*, tel que le markdown et le RMardown.**   
+
+
+- Diffuser et partager ses résultats, éventuellement travailler en équipe ou faire appel à des contributeurs.   
+**==> Un logiciel de gestion de version, tel que git et la plateforme d'hébergement Github basé sur celui-ci.**   
+
+
+
+## R et son ecosystème
+
+
+## Le literate programming
+
+
+## Les logiciels de gestion de version 
+
+
+
+
+
+## Exemple d'application
+
+
+
+
