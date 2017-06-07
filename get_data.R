@@ -71,8 +71,22 @@ for(i in 1:length(links)){
 }
 
 
+# Retrouver le code INSEE des communes
+
+
+# pour l'année 2017
+results2017$id  <- gsub(".html+$", "", results2017$link)
+head(results2017)
+results2017$id  <- gsub("056AR", "1", results2017$id )
+head(results2017)
+results2017$id  <- substr(results2017$id , 6, 100)
+head(results2017)
+results2017 <- results2017[,c("id","name","nb_jlm2017","tx_jlm2017","abstention", "exprimés")]
+head(results2017)
+
+
 # Export du fichier
-write.csv(df,file = "data/results_comidf_2017.csv")
+write.csv(results2017,file = "data/results2017.csv", row.names = F)
 
 
 
@@ -137,8 +151,24 @@ for(i in 1:length(links)){
   df[i,"exprimés"] <- as.numeric(gsub("\\D", "", results[[3]][5,2]))
 }
 
+
+# results2012 <- read.csv("data/results_comidf_2012.csv")
+
+
+# Retrouver le code INSEE des communes
+
+# pour l'année 2012
+results2012$id <- gsub(".html+$", "", results2012$link)
+results2012$id <- gsub("056AR", "1", results2012$id)
+results2012$id <- substr(results2012$id, 6, 100)
+results2012$id <- results2012$id
+results2012 <- results2012[c("id","name","nb_jlm2012","tx_jlm2012","abstention", "exprimés")]
+head(results2012)
+
+
+
 # Export du fichier
-write.csv(df,file = "data/results_comidf_2012.csv")
+write.csv(results2012,file = "data/results2012.csv", row.names = FALSE)
 
 
 

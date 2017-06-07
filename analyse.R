@@ -8,54 +8,38 @@ library("cartography")
 # ***********************************
 # IMPORT ET MISE EN FORME DES DONNEES
 # ***********************************
-# import du csv
-results2017 <- read.csv( "data/results_comidf_2017.csv", header=TRUE, sep=",",
-                         dec=".",encoding="utf-8")
 
-# Retrouver le code INSEE des communes
-# pour l'année 2017
-results2017$id  <- gsub(".html+$", "", results2017$link)
-results2017$id  <- gsub("056AR", "1", results2017$id )
-results2017$id  <- substr(results2017$id , 6, 100)
-results2017 <- results2017[,c("id","name","nb_jlm2017","tx_jlm2017","abstention", "exprimés")]
+# import du csv
+results2017 <- read.csv( "data/results2017.csv")
 
 # pour l'année 2012
-results2012 <- read.csv( "data/results_comidf_2012.csv", header=TRUE, sep=",",
-                         dec=".", encoding="utf-8")
-results2012$id <- gsub(".html+$", "", results2012$link)
-results2012$id <- gsub("056AR", "1", results2012$id)
-results2012$id <- substr(results2012$id, 6, 100)
-results2012$id <- results2012$id
-results2012 <- results2012[c("id","name","nb_jlm2012","tx_jlm2012","abstention", "exprimés")]
-head(results2012)
-
+results2012 <- read.csv( "data/results2012.csv")
 
 
 # import du fond de carte des communes d'IDF
 communes <- readOGR(dsn = "data/idf.geojson", layer = "OGRGeoJSON", 
                     stringsAsFactors = FALSE)
+
+plot(communes)
+
 # import du fond de carte des départements
 departements <- readOGR(dsn = "data/departements.geojson", 
                         layer = "OGRGeoJSON", 
                         stringsAsFactors = FALSE)
 
+plot(departements)
 
-# modifier la projection des fond de carte
 # WGS84 => Lambert93
+
 prj <- "+proj=lcc +lat_1=49 +lat_2=44 +lat_0=46.5 +lon_0=3 +x_0=700000 +y_0=6600000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
 communes <- spTransform(x = communes, CRSobj = prj)
 departements <- spTransform(x = departements, CRSobj = prj)
 
 
-
-
-
-
-
 # **************************
 # PLANCHE CARTOGRAPHIQUE 1 *
+# Stat univariée : visualisation du vote
 # **************************
-
 
 # discretisation & colors
 serie <- c(results2012$tx_jlm2012,results2017$tx_jlm2017)
@@ -66,20 +50,22 @@ med <- median(serie)
 abline(v = moy, col = "red", lwd = 3)
 abline(v = med, col = "blue", lwd = 3)
 nb <- 8
-breaks <- getBreaks(v = serie, nclass = 8, method = "quantile")
-breaks2012 <- c(min(results2012$tx_jlm2012),breaks[2:8],max(results2012$tx_jlm2012))
-breaks2017 <- c(min(results2017$tx_jlm2017),breaks[2:8],max(results2017$tx_jlm2017))
-cols <- carto.pal(pal1 = "wine.pal" ,n1 = nb)
+breaks <- getBreaks(v = serie, nclass = nb, method = "quantile")
+breaks2012 <- c(min(results2012$tx_jlm2012),breaks[2:nb],max(results2012$tx_jlm2012))
+breaks2017 <- c(min(results2017$tx_jlm2017),breaks[2:nb],max(results2017$tx_jlm2017))
 
-dev.off()
+display.carto.all(n = nb)
+cols <- carto.pal(pal1 = "wine.pal" ,n1 = nb)
+cols
+
+
+# Mise en page (Une planche de 4 cartes)
+
 opar <- par(mar = c(0, 0, 1.2, 0), mfrow = c(2, 2))
 
 # MAP 1
-
-
 plot(communes, border = NA, col = NA, bg = "#dbd6ce")
 plot(departements, col = "#dbd6ce", border = "white", lwd = 1,add=T)
-plot(communes, col = "white", border = "#487096", lwd = 0.5, add = TRUE)
 choroLayer(spdf = communes, spdfid="INSEE_COM",
            df = results2012, dfid="id",
            var = "tx_jlm2012",
@@ -99,7 +85,6 @@ layoutLayer(title = "Score de Jean-Luc Mélenchon en 2012", author = "",
             north = FALSE, scale = NULL, col = "black")
 
 # MAP 2
-
 plot(communes, border = NA, col = NA, bg = "#dbd6ce")
 plot(departements, col = "#DDDDDD", border = "white", lwd = 1,add=T)
 plot(communes, col = "#dbd6ce", border = "#EEEEEE", lwd = 0.5, add = TRUE)
@@ -128,10 +113,8 @@ layoutLayer(title = "", author = "",
             north = TRUE, scale = NULL, col = "black")
 
 # MAP 3
-
 plot(communes, border = NA, col = NA, bg = "#dbd6ce")
 plot(departements, col = "#dbd6ce", border = "white", lwd = 1,add=T)
-plot(communes, col = "white", border = "#487096", lwd = 0.5, add = TRUE)
 choroLayer(spdf = communes, spdfid="INSEE_COM",
            df = results2017,
            var = "tx_jlm2017",
@@ -151,7 +134,6 @@ layoutLayer(title = "Score de Jean-Luc Mélenchon en 2017", author = "",
             north = FALSE, scale = NULL, col = "black")
 
 # MAP 4
-
 plot(communes, border = NA, col = NA, bg = "#dbd6ce")
 plot(departements, col = "#DDDDDD", border = "white", lwd = 1,add=T)
 plot(communes, col = "#dbd6ce", border = "#EEEEEE", lwd = 0.5, add = TRUE)
@@ -181,21 +163,16 @@ layoutLayer(title = "", author = "",
 
 
 
-
-
 # **************************
 # PLANCHE EVOLUTION
 # **************************
 
+par(mar = c(0, 0, 1.2, 0), mfrow = c(1, 1))
 votes.df <- data.frame(results2012, results2017[match(results2012[,"id"], 
                                                       results2017[,"id"]),])
-votes.df$diff <- votes.df$nb_jlm2017 - votes.df$nb_jlm2012
 votes.df$evol <-  (votes.df$tx_jlm2017 / votes.df$tx_jlm2012)*100
 votes.df <- votes.df[!is.na(votes.df$tx_jlm2012) & !is.na(votes.df$tx_jlm2017),]
 
-# ABSOLU
-# RELATIF
-par(opar)
 bks <- c(39.88,50,100,150, 175,200, 250, 1303)
 cols <- carto.pal(pal1 = "blue.pal",n1=2, pal2 = "red.pal",n2=5)
 plot(communes, border = NA, col = NA, bg = "#dbd6ce")
@@ -217,22 +194,37 @@ layoutLayer(title = "Evolution du vote Mélenchon 2012-2017 (%)", author = "",
             sources = "", frame = TRUE, 
             north = FALSE, scale = 20, col = "black")
 # Fin de la planche
-dev.off()
+
 
 
 #---- 
 # REGRESSION
 #--------
 
+par(opar)
 plot(votes.df$tx_jlm2012, votes.df$tx_jlm2017, xlim = c(0,40), ylim = c(0, 40), asp = 1, pch = 21, col = "red", cex = 0.5)
 x <- lm(tx_jlm2017~tx_jlm2012, data = votes.df)
 
-abline(x, col = "green")
+abline(x, col = "blue")
 summary(x)
 
 votes.df$res <- residuals(x)
 
 par(mfrow = c(1,2), mar = c(0,0,1.2,0))
+
+head(votes.df)
+plot(communes, border = NA, col = NA, bg = "#dbd6ce")
+plot(departements, col = "#dbd6ce", border = "white", lwd = 1,add=T)
+propSymbolsChoroLayer(spdf = communes,spdfid = "INSEE_COM", df = votes.df, var = "nb_jlm2017",var2 = "res", 
+                      method = "q6", nclass=6, border = "grey20", lwd = 0.5, add=T, inches = 0.15,
+                      col = carto.pal("turquoise.pal", 3, "wine.pal", 3))
+
+plot(departements, col = NA, border = "white", lwd = 1,add=T)
+layoutLayer(title = "Résidus du modèle", author = "", 
+            sources = "", frame = TRUE, 
+            north = FALSE, scale = 20, col = "black")
+
+
 
 plot(communes, border = NA, col = NA, bg = "#dbd6ce")
 plot(departements, col = "#dbd6ce", border = "white", lwd = 1,add=T)
@@ -241,75 +233,47 @@ choroLayer(spdf = communes,spdfid = "INSEE_COM", df = votes.df, var = "res",
            col = carto.pal("turquoise.pal", 3, "wine.pal", 3))
 
 plot(departements, col = NA, border = "white", lwd = 1,add=T)
-layoutLayer(title = "Evolution du vote Mélenchon 2012-2017 (%)", author = "", 
+layoutLayer(title = "", author = "", 
             sources = "", frame = TRUE, 
             north = FALSE, scale = 20, col = "black")
 
-head(votes.df)
-plot(communes, border = NA, col = NA, bg = "#dbd6ce")
-plot(departements, col = "#dbd6ce", border = "white", lwd = 1,add=T)
-propSymbolsChoroLayer(spdf = communes,spdfid = "INSEE_COM", df = votes.df, var = "nb_jlm2017",var2 = "res", 
-           method = "q6", nclass=6, border = "grey20", lwd = 0.5, add=T, inches = 0.15,
-           col = carto.pal("turquoise.pal", 3, "wine.pal", 3))
+# PLUS QUE LA TENDANCE
 
-plot(departements, col = NA, border = "white", lwd = 1,add=T)
-layoutLayer(title = "Evolution du vote Mélenchon 2012-2017 (%)", author = "", 
-            sources = "", frame = TRUE, 
-            north = FALSE, scale = 20, col = "black")
-
-
-
-
-
-# **************************
-# PLANCHE CARTOGRAPHIQUE 2 *
-# **************************
-
-results2012$nb <- results2012$nb_jlm2012*100
-breaks <-  getBreaks(results2012$tx_jlm2012,6)
-breaks[1] <- 5
-breaks[7] <- 17.1
-
-cols <-  carto.pal("wine.pal",n1=6)
+quantile95 <- quantile(votes.df$res, prob = 0.95)
+quantile05 <- quantile(votes.df$res, prob = 0.05)
+forts.df <- votes.df[votes.df$res >= quantile95,]
 
 plot(communes, border = NA, col = NA, bg = "#dbd6ce")
-plot(departements, col = "#dbd6ce", border = "white", lwd = 1,add=T)
-smoothLayer(spdf = communes, df = results2012, spdfid = "INSEE_COM",
-            var = 'nb', var2 = 'exprimés',
-            span = 4000, beta = 2,breaks = breaks, 
-            col = cols, 
-            legend.title.txt = "Vote JLM\n(potentiel 4km)",
-            mask=communes,
-            legend.pos = "bottomleft", legend.values.rnd = 0,add=T)
+plot(communes, col = "#dbd6ce", border = "white", lwd = 0.3,add=T)
 plot(departements, col = NA, border = "white", lwd = 1,add=T)
-layoutLayer(title = "Géographie du vote Mélenchon en 2012", author = "", 
+propSymbolsLayer(spdf = communes,spdfid = "INSEE_COM", df = forts.df, var = "nb_jlm2017", 
+                 border = "grey20", lwd = 0.5, add=T, inches = 0.10,
+                 col = "red")
+layoutLayer(title = "Plus que la tendance", author = "", 
             sources = "", frame = TRUE, 
             north = FALSE, scale = 20, col = "black")
-# CARTE 2017
+labelLayer(spdf=communes, df=forts.df, spdfid = "INSEE_COM", txt="name", col = "black",
+           cex = 0.5)
 
-results2017$nb <- results2017$nb_jlm2017*100
-breaks <-  getBreaks(results2017$tx_jlm2017,6)
-breaks[1] <- 10 
-breaks[7] <- 35.5
-cols <-  carto.pal("wine.pal",n1=6)
+test <- votes.df[order(votes.df$res,decreasing = TRUE), c("name","nb_jlm2012","res")]
 
+
+
+
+# MOINS QUE LA TENDANCE
+faibles.df <- votes.df[votes.df$res <= quantile05,]
 plot(communes, border = NA, col = NA, bg = "#dbd6ce")
-plot(departements, col = "#dbd6ce", border = "white", lwd = 1,add=T)
-smoothLayer(spdf = communes, df = results2017, spdfid = "INSEE_COM",
-            var = 'nb', var2 = 'exprimés',
-            span = 4000, beta = 2, 
-            breaks = breaks,
-            col = cols,
-            legend.title.txt = "vote JLM\n(potentiel 4km)",
-            mask=communes,
-            legend.pos = "bottomleft", legend.values.rnd = 0,add=T) 
-
-
-
+plot(communes, col = "#dbd6ce", border = "white", lwd = 0.3,add=T)
 plot(departements, col = NA, border = "white", lwd = 1,add=T)
-head(departements@data)
-layoutLayer(title = "Géographie du vote Mélenchon en 2017", author = "", 
+propSymbolsLayer(spdf = communes,spdfid = "INSEE_COM", df = faibles.df, var = "nb_jlm2017", 
+                 border = "grey20", lwd = 0.5, add=T, inches = 0.10,
+                 col = "blue")
+layoutLayer(title = "Moins que la tendance", author = "", 
             sources = "", frame = TRUE, 
             north = FALSE, scale = 20, col = "black")
+labelLayer(spdf=communes, df=faibles.df, spdfid = "INSEE_COM", txt="name", col = "black",
+           cex = 0.5)
+
+
 
 
