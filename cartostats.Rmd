@@ -567,39 +567,16 @@ text(x = 6271272, y = 3743765, labels = "Distance function:\n- type = exponentia
 * Analyse
 * Cartographie
 
-## Extraction des données électorales
 
-### __METHODE : __ Webscrapping 
-
-### __PREREQUIS : __ HTML, Expressions regulières
-
-### __PAQUAGES : __ xml2, rvest
-
-## Naviguer de pages en pages...
-
-<img src="./img/page1.png" alt="Drawing" style="width: 100%;"/>
-
-## Naviguer de pages en pages...
-
-<img src="./img/page2.png" alt="Drawing" style="width: 100%;"/>
-
-## Naviguer de pages en pages...
-
-<img src="./img/page3.png" alt="Drawing" style="width: 100%;"/>
-
-## ... jusqu'à atteindre le bon tableau
-
-<img src="./img/page4-1.png" alt="Drawing" style="width: 100%;"/>
-
-## ... jusqu'à atteindre le bon tableau
+## Site web du ministrère de l'intérieur
 
 <img src="./img/page4-2.png" alt="Drawing" style="width: 100%;"/>
 
-## S'appuyer sur les balises, styles, classes, etc...
+## Derrière la page, des balises, des classes, des styles..
 
 <img src="./img/code.png" alt="Drawing" style="width: 100%;"/>
 
-## Dans R
+## Webscrapping avec R
 
 ```{r eval=FALSE,echo=T}
 ## Chargement des packages
@@ -607,49 +584,17 @@ text(x = 6271272, y = 3743765, labels = "Distance function:\n- type = exponentia
 library(xml2)
 library(rvest)
 
-# Liens des pages à lire
-site <- "http://elections.interieur.gouv.fr/presidentielle-2017/011"
-departements <- c("075","077","078","091","092","093","094","095")
-
 ```
 
-## Dans R
-
-```{r eval=FALSE,echo=T}
-
-dep <- departements[1]
-page <- paste(dep,"html",sep=".")
-url <- paste (site,dep,page,sep="/")
-webpage <- read_html(x = url)
-l <- webpage %>% html_nodes(".offset2") %>% html_nodes("a") %>%  html_attr("href")
-l <- gsub("../../011/075/", "", l)
-l <- paste(dep,l,sep="/")
-links <- l
-links
-
-```
-
- [1] "075/075056AR01.html" "075/075056AR02.html" "075/075056AR03.html" "075/075056AR04.html"
- [5] "075/075056AR05.html" "075/075056AR06.html" "075/075056AR07.html" "075/075056AR08.html"
- [9] "075/075056AR09.html" "075/075056AR10.html" "075/075056AR11.html" "075/075056AR12.html"
-[13] "075/075056AR13.html" "075/075056AR14.html" "075/075056AR15.html" "075/075056AR16.html"
-[17] "075/075056AR17.html" "075/075056AR18.html" "075/075056AR19.html" "075/075056AR20.html"
-
-## Dans R
-
-* A l'aide d'une boucle, va sur chaque lien obvtenu jusqu'à obtenir les tableaux de données.
-* A la fin du processus, on sauvegarde des données dans un fichier csv contenant tous les resultats du vote pour toutes les communes d'Île-de-France
+* A l'aide des boucles, on 'parse' les lien pour afficher les pages de chaque commune.
+* Grace a xml2 et rvet, on accède aux données précises dans la page
+* A la fin du processus, on sauvegarde des données dans un fichier csv
 * On réalise cette extraction pour les elections de 2012 et celles de 2017
 
 **==> result2017.csv**   
 **==> result2012.csv**  
 
-* On peut passer à l'étape suivante.
-
-## Live demo
-
-<img src="./img/live.png" alt="Drawing" style="height: 100%;"/>
-
+* On peut passer à l'étape suivante... en live
 
 # 5. Bonus Magrit 
 

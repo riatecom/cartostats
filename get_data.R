@@ -84,7 +84,6 @@ head(results2017)
 results2017 <- results2017[,c("id","name","nb_jlm2017","tx_jlm2017","abstention", "exprimés")]
 head(results2017)
 
-
 # Export du fichier
 write.csv(results2017,file = "data/results2017.csv", row.names = F)
 

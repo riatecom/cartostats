@@ -11,10 +11,11 @@ library("cartography")
 
 # import du csv
 results2017 <- read.csv( "data/results2017.csv")
+head(results2017)
 
 # pour l'année 2012
 results2012 <- read.csv( "data/results2012.csv")
-
+head(results2012)
 
 # import du fond de carte des communes d'IDF
 communes <- readOGR(dsn = "data/idf.geojson", layer = "OGRGeoJSON", 
@@ -36,12 +37,15 @@ communes <- spTransform(x = communes, CRSobj = prj)
 departements <- spTransform(x = departements, CRSobj = prj)
 
 
-# **************************
-# PLANCHE CARTOGRAPHIQUE 1 *
-# Stat univariée : visualisation du vote
-# **************************
+
+# ***********************************************************
+#       OBJECTIF
+#       Réaliser une planche cartographique
+#       mettant en regard les résultats de 2012 et 2017
+# ***********************************************************
 
 # discretisation & colors
+
 serie <- c(results2012$tx_jlm2012,results2017$tx_jlm2017)
 hist(serie, probability = TRUE, nclass = 30)
 rug(serie)
@@ -49,6 +53,7 @@ moy <- mean(serie)
 med <- median(serie)
 abline(v = moy, col = "red", lwd = 3)
 abline(v = med, col = "blue", lwd = 3)
+
 nb <- 8
 breaks <- getBreaks(v = serie, nclass = nb, method = "quantile")
 breaks2012 <- c(min(results2012$tx_jlm2012),breaks[2:nb],max(results2012$tx_jlm2012))
@@ -163,9 +168,12 @@ layoutLayer(title = "", author = "",
 
 
 
-# **************************
-# PLANCHE EVOLUTION
-# **************************
+# ***********************************************************
+#       OBJECTIF
+#       Mesurer l'évolution 2012-2017
+#       => Taux d'évolution
+# ***********************************************************
+
 
 par(mar = c(0, 0, 1.2, 0), mfrow = c(1, 1))
 votes.df <- data.frame(results2012, results2017[match(results2012[,"id"], 
@@ -193,23 +201,25 @@ plot(departements, col = NA, border = "white", lwd = 1,add=T)
 layoutLayer(title = "Evolution du vote Mélenchon 2012-2017 (%)", author = "", 
             sources = "", frame = TRUE, 
             north = FALSE, scale = 20, col = "black")
-# Fin de la planche
 
 
+# ***************************************************************************
+#       OBJECTIF
+#       Voir ou les évolutions sont plus fortes/plus faibles que la tendance
+#       => Analyse bivariée + cartographie des résidus
+# **************************************************************************
 
-#---- 
-# REGRESSION
-#--------
+# Droite de regerssion
 
 par(opar)
 plot(votes.df$tx_jlm2012, votes.df$tx_jlm2017, xlim = c(0,40), ylim = c(0, 40), asp = 1, pch = 21, col = "red", cex = 0.5)
 x <- lm(tx_jlm2017~tx_jlm2012, data = votes.df)
-
 abline(x, col = "blue")
 summary(x)
 
-votes.df$res <- residuals(x)
+# Cartographie des résidus
 
+votes.df$res <- residuals(x)
 par(mfrow = c(1,2), mar = c(0,0,1.2,0))
 
 head(votes.df)
@@ -237,11 +247,15 @@ layoutLayer(title = "", author = "",
             sources = "", frame = TRUE, 
             north = FALSE, scale = 20, col = "black")
 
-# PLUS QUE LA TENDANCE
+# Extraction et visualisation des queues de serie
 
 quantile95 <- quantile(votes.df$res, prob = 0.95)
 quantile05 <- quantile(votes.df$res, prob = 0.05)
 forts.df <- votes.df[votes.df$res >= quantile95,]
+
+par(mfrow = c(1,1), mar = c(0,0,1.2,0))
+
+# Communes en dynamique
 
 plot(communes, border = NA, col = NA, bg = "#dbd6ce")
 plot(communes, col = "#dbd6ce", border = "white", lwd = 0.3,add=T)
@@ -256,11 +270,10 @@ labelLayer(spdf=communes, df=forts.df, spdfid = "INSEE_COM", txt="name", col = "
            cex = 0.5)
 
 test <- votes.df[order(votes.df$res,decreasing = TRUE), c("name","nb_jlm2012","res")]
+head(test,10)
 
+# Communes en dynamique
 
-
-
-# MOINS QUE LA TENDANCE
 faibles.df <- votes.df[votes.df$res <= quantile05,]
 plot(communes, border = NA, col = NA, bg = "#dbd6ce")
 plot(communes, col = "#dbd6ce", border = "white", lwd = 0.3,add=T)
@@ -273,7 +286,7 @@ layoutLayer(title = "Moins que la tendance", author = "",
             north = FALSE, scale = 20, col = "black")
 labelLayer(spdf=communes, df=faibles.df, spdfid = "INSEE_COM", txt="name", col = "black",
            cex = 0.5)
-
+tail(test)
 
 
 
