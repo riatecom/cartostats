@@ -1,7 +1,7 @@
+## Chargement des packages
+
 library(xml2)
 library(rvest)
-
-
 
 ## Obtenir les données de 2017
 
