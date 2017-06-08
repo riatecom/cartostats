@@ -596,7 +596,16 @@ library(rvest)
 
 * On peut passer à l'étape suivante... en live
 
+##
+
+<center><h2>Présentation, codes sources et données disponibles ici </h2></center>
+<br/>
+<center><h2>https://github.com/riatelab/cartostats</h2></center>
+
+
+
 # 5. Bonus Magrit 
+
 
 
 
