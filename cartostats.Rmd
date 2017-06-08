@@ -17,11 +17,13 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ## Qu'est ce que la recherche reproductible ?
 
-**La reproductibilité est le meilleur test de la validité d'une expérimentation scientifique.**
+**Le principe de la reproductibilité est au fondement même des sciences**
 
-***"La science est infaillible ; mais les savants se trompent toujours"* (Anatole France, 1889)**
+**La reproductibilité est le meilleur test de la validité d'une expérimentation scientifique. "_La science est infaillible ; mais les savants se trompent toujours" (Anatole France, 1889)_**
 
-**BUT : Accompagner les publications scientifiques des jeux de données et codes sources pour permettre aux  collègues de reproduire les résultats.**
+**[CONSTAT] Par rapport aux sciences experimentales, Les sciences basées sur l'informatique ont l'avantage d'être plus facilement reproductibles.** 
+
+**[OBJECTIF] Accompagner les publications scientifiques des jeux de données et codes sources pour permettre aux  collègues de reproduire les résultats.**
 
 ## Intérêt de la recherche reproductible
 
@@ -33,9 +35,11 @@ Peng, 2011
 
 **Les cartes, comme les autres production graphiques ou statistiques sont des éléments à part entière des études scientifique.**
 
-**La grande majorité des cartes produites dans un contexte académique actuellement sont produites en utilisant une grande variété de logiciels et de formats.**
+**La grande majorité des cartes produites dans un contexte académique sont issues de processus comlexes. Elles sont donc souvent produites en utilisant une grande variété de logiciels et de formats.**
 
 **Cette variété de formats et de logiciels rend difficile la reproduction des cartes.**
+
+**=> UN OBJECTIF : simplifier les chaines de traitement**
 
 ## Simplifier les chaines de traitement
 
@@ -51,7 +55,7 @@ Peng, 2011
 
 __Un langage commun permetant de couvrir les différentes étapes de la constructuion cartographique__
 
-- Garder une trace des traitements effectués  
+- Garder une trace cohérente des traitements effectués  
 - Partager ses méthodes  
 - Etre transparent, s'exposer à la critique  
 - Faciliter les mises à jour  

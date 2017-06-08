@@ -174,11 +174,15 @@ layoutLayer(title = "", author = "",
 
 
 par(mar = c(0, 0, 1.2, 0), mfrow = c(1, 1))
+
+# Jointure pour regrouper les données 2012 et 2017
 votes.df <- data.frame(results2012, results2017[match(results2012[,"id"], 
                                                       results2017[,"id"]),])
+# Calcul du taux d'évolution
 votes.df$evol <-  (votes.df$tx_jlm2017 / votes.df$tx_jlm2012)*100
 votes.df <- votes.df[!is.na(votes.df$tx_jlm2012) & !is.na(votes.df$tx_jlm2017),]
 
+# Cartographie
 bks <- c(39.88,50,100,150, 175,200, 250, 1303)
 cols <- carto.pal(pal1 = "blue.pal",n1=2, pal2 = "red.pal",n2=5)
 plot(communes, border = NA, col = NA, bg = "#dbd6ce")
