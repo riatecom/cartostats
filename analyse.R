@@ -3,8 +3,6 @@ library("rgeos")
 library ("rgdal")
 library("cartography")
 
-
-
 # ***********************************
 # IMPORT ET MISE EN FORME DES DONNEES
 # ***********************************
@@ -61,7 +59,7 @@ breaks2017 <- c(min(results2017$tx_jlm2017),breaks[2:nb],max(results2017$tx_jlm2
 
 display.carto.all(n = nb)
 cols <- carto.pal(pal1 = "wine.pal" ,n1 = nb)
-cols
+
 
 
 # Mise en page (Une planche de 4 cartes)
@@ -202,6 +200,11 @@ layoutLayer(title = "Evolution du vote Mélenchon 2012-2017 (%)", author = "",
             sources = "", frame = TRUE, 
             north = FALSE, scale = 20, col = "black")
 
+# Communes avec une forte évolution
+test <- votes.df[order(votes.df$evol,decreasing = TRUE), c("name","nb_jlm2012","evol")]
+test <- test[test$nb_jlm2012>1000,]
+head(test,15)
+
 
 # ***************************************************************************
 #       OBJECTIF
@@ -222,7 +225,6 @@ summary(x)
 votes.df$res <- residuals(x)
 par(mfrow = c(1,2), mar = c(0,0,1.2,0))
 
-head(votes.df)
 plot(communes, border = NA, col = NA, bg = "#dbd6ce")
 plot(departements, col = "#dbd6ce", border = "white", lwd = 1,add=T)
 propSymbolsChoroLayer(spdf = communes,spdfid = "INSEE_COM", df = votes.df, var = "nb_jlm2017",var2 = "res", 
@@ -266,10 +268,12 @@ propSymbolsLayer(spdf = communes,spdfid = "INSEE_COM", df = forts.df, var = "nb_
 layoutLayer(title = "Plus que la tendance", author = "", 
             sources = "", frame = TRUE, 
             north = FALSE, scale = 20, col = "black")
-labelLayer(spdf=communes, df=forts.df, spdfid = "INSEE_COM", txt="name", col = "black",
+labelLayer(spdf=communes, df=forts.df[forts.df$nb_jlm2012>1000,], spdfid = "INSEE_COM", txt="name", col = "black",
            cex = 0.5)
 
+
 test <- votes.df[order(votes.df$res,decreasing = TRUE), c("name","nb_jlm2012","res")]
+test <- test[test$nb_jlm2012>1000,]
 head(test,10)
 
 # Communes en dynamique
@@ -284,9 +288,12 @@ propSymbolsLayer(spdf = communes,spdfid = "INSEE_COM", df = faibles.df, var = "n
 layoutLayer(title = "Moins que la tendance", author = "", 
             sources = "", frame = TRUE, 
             north = FALSE, scale = 20, col = "black")
-labelLayer(spdf=communes, df=faibles.df, spdfid = "INSEE_COM", txt="name", col = "black",
+labelLayer(spdf=communes, df=faibles.df[faibles.df$nb_jlm2012>50,], spdfid = "INSEE_COM", txt="name", col = "black",
            cex = 0.5)
-tail(test)
+
+test <- votes.df[order(votes.df$res,decreasing = TRUE), c("name","nb_jlm2012","res")]
+test <- test[test$nb_jlm2012>50,]
+tail(test,10)
 
 
 

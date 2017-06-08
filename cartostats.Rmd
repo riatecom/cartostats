@@ -49,6 +49,8 @@ Peng, 2011
 
 ## Les enjeux de la cartographie reproductible
 
+__Un langage commun permetant de couvrir les différentes étapes de la constructuion cartographique__
+
 - Garder une trace des traitements effectués  
 - Partager ses méthodes  
 - Etre transparent, s'exposer à la critique  
