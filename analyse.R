@@ -1,4 +1,3 @@
-
 library("rgeos")
 library ("rgdal")
 library("cartography")
@@ -240,8 +239,6 @@ layoutLayer(title = "Résidus du modèle", author = "",
             sources = "", frame = TRUE, 
             north = FALSE, scale = 20, col = "black")
 
-
-
 plot(communes, border = NA, col = NA, bg = "#dbd6ce")
 plot(departements, col = "#dbd6ce", border = "white", lwd = 1,add=T)
 choroLayer(spdf = communes,spdfid = "INSEE_COM", df = votes.df, var = "res", 
@@ -280,7 +277,7 @@ test <- votes.df[order(votes.df$res,decreasing = TRUE), c("name","nb_jlm2012","r
 test <- test[test$nb_jlm2012>1000,]
 head(test,10)
 
-# Communes en dynamique
+# Communes en desenchantement
 
 faibles.df <- votes.df[votes.df$res <= quantile05,]
 plot(communes, border = NA, col = NA, bg = "#dbd6ce")
