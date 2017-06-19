@@ -1,4 +1,4 @@
-# Pourquoi et comment inscrire la production de cartes statistiques dans un processus de recherche reproductible.
+# [Pourquoi et comment inscrire la production de cartes statistiques dans un processus de recherche reproductible](https://riatelab.github.io/cartostats/)
 *9 juin 2017*  
 **Journée cartostats**  
 Giraud & Lambert  
